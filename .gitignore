@@ -1,0 +1,10 @@
+# Text files
+*.txt
+
+# obj files
+objects/
+*.gcda
+*.gcno
+vilya
+*.a
+*.o
