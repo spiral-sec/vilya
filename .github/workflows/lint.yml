@@ -8,4 +8,4 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: clang-format lint
-      run: find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/.fmt_check.sh {} \;
+      run: find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/lint.sh {} \;
