@@ -53,4 +53,7 @@ clean:
 
 re: clean all
 
+lint:
+	@find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/lint.sh {} \;
+
 .PHONY: all clean clean re

@@ -1,15 +1,15 @@
 
-#include <string.h>
 #include <fcntl.h>
+#include <string.h>
+#include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <sys/mman.h>
 
 #include "elf.h"
 #include "vilya.h"
 
-int is_valid_elf(const char *filepath, __attribute__((unused))struct stat st, file_t *result)
+int is_valid_elf(const char *filepath, __attribute__((unused)) struct stat st, file_t *result)
 {
     int fd = open(filepath, O_RDONLY);
     size_t length = (size_t)lseek(fd, 0, SEEK_END);

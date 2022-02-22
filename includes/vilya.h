@@ -3,9 +3,8 @@
 #define VILYA_H
 
 #include <elf.h>
-#include <stdio.h>
-#include <sys/types.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
