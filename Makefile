@@ -9,7 +9,8 @@ RM			 	= rm -rf
 INCLUDES 	 	= -I./includes/
 LINK_FLAG    	=
 CFLAGS 		 	= -Wall -Wextra -fPIC -Weverything -O2 \
-				  -Wno-padded -Wno-gnu-zero-variadic-macro-arguments -Wno-extra-semi-stmt
+				  -Wno-padded \
+				  -Wno-gnu-zero-variadic-macro-arguments -Wno-extra-semi-stmt
 PATTERN 	 	= .c
 OBJPATTERN  	= .o
 SRC_DIR 		= ./sources

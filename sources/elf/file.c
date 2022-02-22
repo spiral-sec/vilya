@@ -14,7 +14,7 @@ int is_valid_elf(const char *filepath, __attribute__((unused)) struct stat st, f
     int fd = open(filepath, O_RDONLY);
     size_t length = (size_t)lseek(fd, 0, SEEK_END);
 
-    if (fd < 0 || length != (unsigned)-1)
+    if (fd < 0 || length == (unsigned)-1)
         return 0;
     result->header = (Elf_Ehdr *)mmap(NULL, length, PROT_READ, MAP_SHARED, fd, 0);
     close(fd);

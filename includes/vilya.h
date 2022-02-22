@@ -38,7 +38,6 @@ typedef struct target_file_s {
 
     Elf_Ehdr *header;
     void *end_ptr;
-    char padding[4];
 } file_t;
 
 typedef struct user_input_s {

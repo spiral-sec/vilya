@@ -26,7 +26,7 @@ static int is_valid_file(const char *filepath, file_t *result)
 
     if (filepath == NULL || *filepath == 0)
         return 0;
-    else if (stat(filepath, &st) && st.st_mode & S_IXUSR)
+    else if (stat(filepath, &st) != -1 && st.st_mode & S_IXUSR)
         return is_valid_elf(filepath, st, result);
     return 0;
 }
@@ -43,7 +43,7 @@ static void display_help(char const *bin_name)
 int has_valid_input(int argc, char **argv, file_t *parsed, input_t *settings)
 {
     int opt = 0;
-    int index = 0;
+    int index = 1;
     static struct option long_options[] = {{"verbose", no_argument, 0, 'v'},
     {"help", no_argument, 0, 'h'}, {"arch", required_argument, 0, 'a'}, {0, 0, 0, 0}};
 
@@ -64,7 +64,7 @@ int has_valid_input(int argc, char **argv, file_t *parsed, input_t *settings)
                 _exit(1);
             } else
                 break;
-        case '?': LOG_IF_VERBOSE(settings->verbose, "unknown option: %s", optarg); return 0;
+        case '?': break;
         }
     }
     return is_valid_file(argv[index], parsed);
