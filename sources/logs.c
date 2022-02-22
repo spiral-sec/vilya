@@ -2,6 +2,8 @@
 #include <string.h>
 #include <time.h>
 
+#include "vilya.h"
+
 char *timestamp(void)
 {
     time_t now = time(NULL);

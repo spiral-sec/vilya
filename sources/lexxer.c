@@ -1,28 +1,26 @@
 
 #include <getopt.h>
-#include <string.h>
 #include <stdio.h>
-#include <unistd.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "elf.h"
 #include "vilya.h"
 
-int is_valid_arch(char const *requested_arch, architecture_t *arch)
+static int is_valid_arch(char const *requested_arch, architecture_t *arch)
 {
     int ctr = -1;
-    const char *supported_architectures[] = {
-        "x86_64", "x64_x64_x32", NULL
-    };
+    const char *supported_architectures[] = {"x86_64", "x64_x64_x32", NULL};
 
-    while (!strcmp(supported_architectures[++ctr], requested_arch));
+    while (!strcmp(supported_architectures[++ctr], requested_arch))
+        ;
     *arch = (architecture_t)ctr;
     return (*arch != UNKNOWN);
 }
 
-int is_valid_file(const char *filepath, file_t *result)
+static int is_valid_file(const char *filepath, file_t *result)
 {
     struct stat st;
 
@@ -33,9 +31,9 @@ int is_valid_file(const char *filepath, file_t *result)
     return 0;
 }
 
-void display_help(char const *bin_name)
+static void display_help(char const *bin_name)
 {
-    //TODO: show supported_architectures[] here
+    // TODO: show supported_architectures[] here
     dprintf(STDERR_FILENO, "%s: simple polymorphic ELF packer.\n\n", bin_name);
     dprintf(STDERR_FILENO, "Usage:\n\t--verbose -v\t\tenables verbose mode\n");
     dprintf(STDERR_FILENO, "\t--help -h\t\tdisplays this message\n");
@@ -64,9 +62,10 @@ int has_valid_input(int argc, char **argv, file_t *parsed, input_t *settings)
             if (!is_valid_arch(optarg, &parsed->arch)) {
                 LOG("unsupported architecture: %s.\n", optarg);
                 _exit(1);
-            } else break;
+            } else
+                break;
         case '?': LOG_IF_VERBOSE(settings->verbose, "unknown option: %s", optarg); return 0;
         }
     }
-    return 1;
+    return is_valid_file(argv[index], parsed);
 }

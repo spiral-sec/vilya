@@ -8,16 +8,22 @@ RM			 	= rm -rf
 
 INCLUDES 	 	= -I./includes/
 LINK_FLAG    	=
-CFLAGS 		 	= -Wall -Wextra -fPIC -Weverything -O2
+CFLAGS 		 	= -Wall -Wextra -fPIC -Weverything -O2 \
+				  -Wno-padded -Wno-gnu-zero-variadic-macro-arguments -Wno-extra-semi-stmt
 PATTERN 	 	= .c
 OBJPATTERN  	= .o
 SRC_DIR 		= ./sources
 OBJECT_DIR 		= ./objects
 
 vpath %$(PATTERN) $(SRC_DIR)
+vpath %$(PATTERN) $(SRC_DIR)/elf
+
 
 MAIN		 	= main.c
-SRC 		 	=
+UTILS 			= lexxer.c logs.c
+ELF 			= file.c
+
+SRC 			= $(MAIN) $(ELF) $(UTILS)
 
 ########################
 #### COMPILATION #######
