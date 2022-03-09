@@ -19,12 +19,12 @@ int is_valid_elf(file_t *result, input_t *settings)
     if (stat(settings->target, &st) < 0 || fd < 0 || length == (unsigned)-1)
         return 0;
     strncpy((char *)result->filename, settings->target, DEFAULT_BUFFER_SIZE);
-    result->header = (Elf_Ehdr *)mmap(NULL, length, PROT_READ, MAP_SHARED, fd, 0);
+    result->header = (Elf64_Ehdr *)mmap(NULL, length, PROT_READ, MAP_SHARED, fd, 0);
     close(fd);
     if (!result->header)
         return 0;
     result->end_ptr = result->header + length;
-    if (length < sizeof(Elf_Ehdr) || memcmp(result->header, ELF_HEADER, sizeof(ELF_HEADER) - 1))
+    if (length < sizeof(Elf64_Ehdr) || memcmp(result->header, ELF_HEADER, sizeof(ELF_HEADER) - 1))
         return 0;
     return 1;
 }

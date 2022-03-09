@@ -8,22 +8,12 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-/* TODO: support for i386, arm64, arm_eabi_thumb, arm_eabi */
-typedef enum target_arch { X86_64, X86_64_X32, UNKNOWN } architecture_t;
+/* TODO: support for i386, arm64, arm_eabi_thumb, arm_eabi and 32bits */
+typedef enum target_arch { X86_64, UNKNOWN } architecture_t;
 
 #ifndef DEFAULT_BUFFER_SIZE
 #define DEFAULT_BUFFER_SIZE (512)
 #endif /* DEFAULT_BUFFER_SIZE */
-
-#ifdef __LP64__
-#define Elf_Ehdr Elf64_Ehdr
-#define Elf_Shdr Elf64_Shdr
-#define Elf_Sym Elf64_Sym
-#else
-#define Elf_Ehdr Elf32_Ehdr
-#define Elf_Shdr Elf32_Shdr
-#define Elf_Sym Elf32_Sym
-#endif
 
 #ifndef ELF_HEADER
 #define ELF_HEADER ("\177ELF")
@@ -36,7 +26,7 @@ typedef struct target_file_s {
     size_t content_len;
     architecture_t arch;
 
-    Elf_Ehdr *header;
+    Elf64_Ehdr *header;
     void *end_ptr;
 } file_t;
 
