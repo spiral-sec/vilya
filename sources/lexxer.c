@@ -10,7 +10,7 @@
 static int is_valid_arch(char const *requested_arch, input_t *settings)
 {
     int ctr = -1;
-    const char *supported_architectures[] = {"x86-64", "x64-x64-x32", NULL};
+    const char *supported_architectures[] = {"x86-64", NULL};
 
     while (supported_architectures[++ctr] != NULL) {
         if (!strcmp(requested_arch, supported_architectures[ctr])) {

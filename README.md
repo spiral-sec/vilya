@@ -9,7 +9,7 @@ you can try to force the binary's architecture like so:
 ```
 
 Currently supported architectures are:
-`x86-64, x64-x64-x32`
+`x86-64`
 
 ## Installing
 
