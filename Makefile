@@ -3,6 +3,8 @@
 ########################
 
 NAME		 	= vilya
+UTESTS_BIN 		= vilya_unit_tests
+
 CC			 	= clang
 RM			 	= rm -rf
 
@@ -21,10 +23,11 @@ vpath %$(PATTERN) $(SRC_DIR)/elf
 
 
 MAIN		 	= main.c
-UTILS 			= lexxer.c logs.c
-ELF 			= file.c
+UTILS 			= lexxer.c logs.c file.c
+ELF 			=
 
 SRC 			= $(MAIN) $(ELF) $(UTILS)
+TESTS 			= $(ELF) $(UTILS)
 
 ########################
 #### COMPILATION #######
@@ -32,8 +35,9 @@ SRC 			= $(MAIN) $(ELF) $(UTILS)
 
 COMBINED		= $(SRC) $(MAIN)
 OBJ 	 		= $(patsubst %$(PATTERN), $(OBJECT_DIR)/%$(OBJPATTERN), $(COMBINED))
+OBJT 			= $(patsubst %$(PATTERN), $(OBJECT_DIR)/%$(OBJPATTERN), $(TESTS))
 
-all: directories $(NAME)
+all: directories $(NAME) ## compiles the packer
 
 $(OBJECT_DIR):
 	@mkdir -p $@
@@ -48,13 +52,34 @@ $(NAME): $(OBJ)
 	@$(CC) -o $(NAME) $^ $(CFLAGS) $(INCLUDES) $(LINK_FLAG)
 	@echo "[*** COMPILATION SUCCESSFUL ***]"
 
-clean:
+clean: ## cleans object files and deletes binary
 	@$(RM) objects $(NAME)
 	@echo "[*** CLEAN ***]"
 
-re: clean all
+re: clean all ## cleans and rebuilds the binary
 
-lint:
+########################
+###### TESTING #########
+########################
+
+
+test: clean directories $(OBJT) ## runs unit tests
+	@$(CC) -o $(UTESTS_BIN) $(OBJT) --coverage $(INCLUDES) $(LINK_FLAG) -lcriterion
+	@./$(UTESTS_BIN) > /dev/null
+	@gcovr --exclude ./tests/ -s -p
+	@$(RM) $(UTESTS_BIN) $(NAME) *.gcda *.gcno $(OBJECT_DIR)
+	@echo "[*** TESTS DONE ***]"
+
+lint: ## Runs linting script
 	@find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/lint.sh {} \;
 
-.PHONY: all clean clean re
+########################
+##### HELP DIALOG ######
+########################
+
+help: ## Displays help dialog
+	@echo "\033[34mVilya targets:\033[0m"
+	@perl -nle'print $& if m{^[a-zA-Z_-\d]+:.*?## .*$$}' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-22s\033[0m %s\n", $$1, $$2}'
+
+
+.PHONY: all clean clean re help test
