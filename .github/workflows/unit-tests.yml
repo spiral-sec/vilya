@@ -12,5 +12,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    name: run utests
-    run: make test
+    - name: run utests
+      run: make test
