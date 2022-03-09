@@ -1,11 +1,14 @@
-name: C/C++ CI
+name: Code Quality
 
 on: push
 jobs:
-  run-tests:
+  run-lint:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: install dependencies
+      run: sudo apt install -y clang-tidy
 
     - name: clang-format lint
       run: find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/lint.sh {} \;
