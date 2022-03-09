@@ -30,7 +30,7 @@ typedef enum target_arch { X86_64, X86_64_X32, UNKNOWN } architecture_t;
 #endif /* ELF_HEADER */
 
 typedef struct target_file_s {
-    const char filename[DEFAULT_BUFFER_SIZE];
+    char filename[DEFAULT_BUFFER_SIZE];
 
     unsigned char *content;
     size_t content_len;
@@ -42,17 +42,19 @@ typedef struct target_file_s {
 
 typedef struct user_input_s {
     int verbose : 1;
+    char target[DEFAULT_BUFFER_SIZE];
+    architecture_t requested;
 } input_t;
 
 // lexer.c
-int has_valid_input(int, char *[], file_t *, input_t *);
+int has_valid_input(int, char *[], input_t *);
 
 #ifndef LOG
 #define LOG(f_, ...) dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n")
 #endif /* LOG */
 
-#ifndef LOG_IF_VERBOSE
-#define LOG_IF_VERBOSE(enabled, f_, ...)                                                          \
+#ifndef LOG_IF
+#define LOG_IF(enabled, f_, ...)                                                                  \
     if (enabled) {                                                                                \
         dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n");              \
     } else {                                                                                      \
@@ -64,6 +66,6 @@ char *timestamp(void);
 
 // ELF/
 // file.c
-int is_valid_elf(char const *filepath, struct stat st, file_t *result);
+int is_valid_elf(file_t *result, input_t *settings);
 
 #endif /* VILYA_H */
