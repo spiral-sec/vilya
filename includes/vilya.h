@@ -17,11 +17,15 @@
 typedef struct target_file_s {
     char filename[DEFAULT_BUFFER_SIZE];
     GElf_Ehdr ehdr;
+    GElf_Addr original_entry_point;
+
+    unsigned char *bytes;
+    size_t byte_count;
 } file_t;
 
 typedef struct user_input_s {
     int verbose : 1;
-    char target[DEFAULT_BUFFER_SIZE];
+    char filepath[DEFAULT_BUFFER_SIZE];
 } input_t;
 
 // lexer.c
@@ -38,7 +42,7 @@ int has_valid_input(int, char *[], input_t *);
             dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n");          \
         }                                                                                         \
     while (0);
-#endif /* LOG_IF_VERBOSE */
+#endif /* LOG_IF */
 
 // logs.c
 char *timestamp(void);

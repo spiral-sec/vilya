@@ -2,7 +2,6 @@
 
 ## TODO
 
-- [ ] adapt code for 32/64 bits ELF binaries
 - [ ] build straightforward and generic wait to get a program's entrypoint
 - [ ] encapsulate target code, into a newly formed program that will decode and run it
 
@@ -19,8 +18,11 @@ Currently supported architectures are:
 
 ## Installing
 
-To run and build the packer, no special dependency is required, besides `clang` and `make`:
+To run and build the packer :
 ```bash
+# install dependencies
+sudo apt install -y libelf-dev clang make
+
 git clone git@github.com:bogdzn/vilya.git
 cd vilya
 make

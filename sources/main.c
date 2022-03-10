@@ -11,8 +11,8 @@ int main(int argc, char *argv[])
     if (!has_valid_input(argc, argv, &user_input)) {
         fprintf(stderr, "%s: Please provide a valid input.\n", argv[0]);
         return 1;
-    } else if (!open_file(&target, &user_input)) {
-        LOG_IF(user_input.verbose, "Could not parse ELF: %s", user_input.target);
+    } else if (!read_elf(&target, &user_input)) {
+        LOG_IF(user_input.verbose, "Could not parse ELF: %s", user_input.filepath);
         return 1;
     }
     return 0;

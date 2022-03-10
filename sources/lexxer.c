@@ -12,7 +12,6 @@ static void display_help(char const *bin_name)
     dprintf(STDERR_FILENO, "%s: simple polymorphic ELF packer.\n\n", bin_name);
     dprintf(STDERR_FILENO, "Usage:\n\t--verbose -v\t\tenables verbose mode\n");
     dprintf(STDERR_FILENO, "\t--help -h\t\tdisplays this message\n");
-    dprintf(STDERR_FILENO, "\t--arch -a\t\tforces a specific architecture\n");
 }
 
 int has_valid_input(int argc, char **argv, input_t *settings)
@@ -36,6 +35,6 @@ int has_valid_input(int argc, char **argv, input_t *settings)
     }
     if (argc < optind)
         return 0;
-    strncpy(settings->target, argv[optind], DEFAULT_BUFFER_SIZE);
+    strncpy(settings->filepath, argv[optind], DEFAULT_BUFFER_SIZE);
     return 1;
 }
