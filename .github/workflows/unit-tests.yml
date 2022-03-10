@@ -12,5 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: dependencies
+      run: sudo apt install -y libelf-dev
+
     - name: run utests
       run: make test

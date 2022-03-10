@@ -21,22 +21,3 @@ Test(has_valid_input, require_verbose)
     cr_assert_eq(has_valid_input(argc, (char **)argv, &settings), 1);
     cr_assert_neq(settings.verbose, 0);
 }
-
-Test(has_valid_input, require_valid_arch)
-{
-    input_t settings = {0};
-    const int argc = 5;
-    const char *argv[] = {"./vilya", "-v", "-a", "x86-64", "./vilya", NULL};
-
-    cr_assert_eq(has_valid_input(argc, (char **)argv, &settings), 1);
-    cr_assert_neq(settings.verbose, 0);
-}
-
-Test(has_valid_input, require_invalid_arch)
-{
-    input_t settings = {0};
-    const int argc = 5;
-    const char *argv[] = {"./vilya", "-v", "-a", "some-arch", "./vilya", NULL};
-
-    cr_assert_eq(has_valid_input(argc, (char **)argv, &settings), 0);
-}

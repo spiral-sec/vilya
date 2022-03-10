@@ -1,30 +1,53 @@
 
+#include <elf.h>
+#include <errno.h>
 #include <fcntl.h>
+#include <gelf.h>
+#include <libelf.h>
+#include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "elf.h"
+#include "format_elf.h"
 #include "vilya.h"
 
-int is_valid_elf(file_t *result, input_t *settings)
+int open_file(file_t *result, input_t *settings)
 {
     int fd = open(settings->target, O_RDONLY);
-    size_t length = (size_t)lseek(fd, 0, SEEK_END);
-    struct stat st;
+    Elf *elf = NULL;
 
-    result->arch = settings->requested;
-    if (stat(settings->target, &st) < 0 || fd < 0 || length == (unsigned)-1)
+    elf_version(EV_CURRENT);
+    elf = elf_begin(fd, ELF_C_READ, NULL);
+    if (!elf || elf_kind(elf) != ELF_K_ELF) {
+        LOG_IF(settings->verbose, "Invalid file: %s", result->filename);
         return 0;
-    strncpy((char *)result->filename, settings->target, DEFAULT_BUFFER_SIZE);
-    result->header = (Elf64_Ehdr *)mmap(NULL, length, PROT_READ, MAP_SHARED, fd, 0);
+    } else if (!gelf_getehdr(elf, &result->ehdr)) {
+        LOG("Could not read program header: %s", strerror(errno));
+        return 0;
+    }
     close(fd);
-    if (!result->header)
+    elf_end(elf);
+    return 1;
+}
+
+int write_to_outfile(file_t *result, input_t *settings)
+{
+    int fd = 0;
+
+    if (unlink(result->filename) < 0) {
+        LOG_IF(
+        settings->verbose, "[!] unlinking %s failed: %s", result->filename, strerror(errno));
         return 0;
-    result->end_ptr = result->header + length;
-    if (length < sizeof(Elf64_Ehdr) || memcmp(result->header, ELF_HEADER, sizeof(ELF_HEADER) - 1))
+    }
+    fd = open(result->filename, O_CREAT | O_TRUNC | O_RDWR, S_IRWXU);
+    if (fd == -1) {
+        LOG_IF(settings->verbose, "[!] Could not create file descriptor for %s: %s",
+        result->filename, strerror(errno));
         return 0;
+    }
+    close(fd);
     return 1;
 }
