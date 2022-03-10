@@ -54,14 +54,14 @@ ifeq ($(MAKECMDGOALS), test)
   CC         := gcc
   C_WARNINGS := -Wall -Wextra
   CFLAGS     := -fprofile-arcs -ftest-coverage
-  LDFLAGS    := -lgcov --coverage -lcriterion
+  LDFLAGS    := -lgcov --coverage -lcriterion -lelf
 else
   CC         := clang
   C_WARNINGS := -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-format-nonliteral \
 				-Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command \
 				-Wno-padded -Wno-extra-semi-stmt
   CFLAGS     :=
-  LDFLAGS    :=
+  LDFLAGS    := -lelf
 endif
 
 

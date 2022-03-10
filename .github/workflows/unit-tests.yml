@@ -12,5 +12,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: dependencies
+      run: sudo dnf install -y elfutils-libelf-devel
+
     - name: run utests
       run: make test
