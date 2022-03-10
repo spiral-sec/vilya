@@ -13,7 +13,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: dependencies
-      run: sudo apt install -y libelf-dev
+      run: sudo dnf install -y elfutils-libelf-devel
 
     - name: run utests
       run: make test
