@@ -60,7 +60,7 @@ else
   C_WARNINGS := -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-format-nonliteral \
 				-Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command \
 				-Wno-padded -Wno-extra-semi-stmt
-  CFLAGS     :=
+  CFLAGS     := -static
   LDFLAGS    := -lelf
 endif
 

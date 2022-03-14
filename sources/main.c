@@ -1,6 +1,7 @@
 
 #include "format_elf.h"
 #include <stdio.h>
+#include <sys/mman.h>
 #include "vilya.h"
 
 int main(int argc, char *argv[])
@@ -15,5 +16,7 @@ int main(int argc, char *argv[])
         LOG_IF(user_input.verbose, "Could not parse ELF: %s", user_input.filepath);
         return 1;
     }
+    munmap((void *)target.content, target.content_size);
+
     return 0;
 }

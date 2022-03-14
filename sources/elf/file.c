@@ -15,31 +15,33 @@
 #include "format_elf.h"
 #include "vilya.h"
 
-static int read_elf_content(int fd, file_t *file_handler)
+static int read_elf_content(int fd, file_t *file)
 {
-    file_handler->byte_count = (size_t)lseek(fd, 0, SEEK_END);
-    file_handler->bytes = malloc(sizeof(char) * file_handler->byte_count);
-    lseek(fd, 0, SEEK_SET);
-    if (!file_handler->bytes || read(fd, file_handler->bytes, file_handler->byte_count) < 0)
-        return 0;
-    return 1;
+    file->content_size = (size_t)lseek(fd, 0, SEEK_END);
+    file->content =
+    mmap((void *)0, file->content_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, fd, 0);
+    return file->content != NULL;
 }
 
-int read_elf(file_t *file_handler, input_t *settings)
+int read_elf(file_t *file, input_t *settings)
 {
     int fd = open(settings->filepath, O_RDONLY);
     Elf *elf = NULL;
+    GElf_Shdr *shdr = NULL;
 
     elf_version(EV_CURRENT);
     elf = (fd < 0) ? NULL : elf_begin(fd, ELF_C_READ, NULL);
     if (!elf || elf_kind(elf) != ELF_K_ELF) {
-        LOG_IF(settings->verbose, "Invalid file: %s", file_handler->filename);
+        LOG_IF(settings->verbose, "Invalid file: %s", file->filename);
         return 0;
-    } else if (!gelf_getehdr(elf, &file_handler->ehdr) || !read_elf_content(fd, file_handler))
+    } else if (!gelf_getehdr(elf, &file->ehdr) || !read_elf_content(fd, file))
         return 0;
-    file_handler->original_entry_point = file_handler->ehdr.e_entry;
-    close(fd);
+    file->original_entry_point = file->ehdr.e_entry;
     elf_end(elf);
+    close(fd);
+    shdr = (GElf_Shdr *)file->content + file->ehdr.e_shoff;
+    file->symbols = &shdr[file->ehdr.e_shstrndx];
+    file->section_names = (byte *)file->content + file->symbols->sh_offset;
     return 1;
 }
 

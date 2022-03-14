@@ -14,13 +14,17 @@
 #define DEFAULT_BUFFER_SIZE (512)
 #endif /* DEFAULT_BUFFER_SIZE */
 
+typedef unsigned char byte;
+
 typedef struct target_file_s {
     char filename[DEFAULT_BUFFER_SIZE];
     GElf_Ehdr ehdr;
+    GElf_Shdr *symbols;
+    byte *section_names;
     GElf_Addr original_entry_point;
 
-    unsigned char *bytes;
-    size_t byte_count;
+    byte *content;
+    size_t content_size;
 } file_t;
 
 typedef struct user_input_s {
