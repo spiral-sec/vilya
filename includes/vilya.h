@@ -31,19 +31,20 @@ typedef struct target_file_s {
 typedef struct user_input_s {
     int verbose : 1;
     char filepath[DEFAULT_BUFFER_SIZE];
+    char current_file_path[DEFAULT_BUFFER_SIZE];
 } input_t;
 
 // lexer.c
 int has_valid_input(int, char *[], input_t *);
 
 // loader.c
-int load_entry(char const *filepath);
-void __xor(byte *to_crypt, size_t size, uint32_t hash);
-uint32_t hash_section(byte *content, byte *target_section);
+int load_entry(void);
+uint32_t get_hash_from_program(void);
+void xor_bytes(byte *to_crypt, size_t size, uint32_t hash);
 byte *find_section(byte *content, char const *target_name);
 
 #ifndef LOADER
-#define LOADER (".bss.loader")
+#define LOADER (".vilya")
 #endif
 
 #ifndef LOG

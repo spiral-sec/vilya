@@ -21,6 +21,6 @@ byte *find_section(byte *elf, char const *section_name);
 void display_shdr_content(GElf_Shdr *shdr, file_t *elf, input_t *settings);
 
 // stub_manager.c
-int encapsulate(file_t *file, input_t *settings);
+int append_stub(file_t *file, input_t *settings);
 
 #endif /* FORMAT_ELF_H_ */
