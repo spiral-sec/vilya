@@ -3,6 +3,7 @@
 #include <gelf.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "vilya.h"
 
 inline static uint64_t rrotate(uint64_t key)
@@ -54,6 +55,26 @@ GElf_Shdr *get_last_section(file_t *elf, GElf_Phdr *pt_load)
     return result;
 }
 
+int create_section(file_t *elf, GElf_Shdr *last, GElf_Phdr *pt_load)
+{
+    GElf_Shdr *new_shdr = realloc(elf->symbols, (elf->ehdr.e_shnum + 1) * sizeof(GElf_Shdr));
+    GElf_Phdr *phdr = (GElf_Phdr *)(elf->content + elf->ehdr.e_phoff);
+    uint8_t *loader = NULL;
+    uint64_t entry_addr;
+    uint64_t entry_size;
+
+    if (!new_shdr)
+        return 0;
+
+    new_shdr->sh_offset = pt_load->p_offset + pt_load->p_memsz;
+    new_shdr->sh_addr = pt_load->p_vaddr + pt_load->p_memsz;
+
+    /* TODO append LOADER section here */
+
+    elf->ehdr.e_shnum += 1;
+    return 1;
+}
+
 int append_stub(file_t *elf, input_t *settings)
 {
     GElf_Phdr *pt_load = get_last_ptload(elf);
@@ -63,5 +84,6 @@ int append_stub(file_t *elf, input_t *settings)
         LOG("Could not find PT_LOAD section or last loaded section");
         return 0;
     }
+    create_section(elf, last_section, pt_load);
     return 1;
 }

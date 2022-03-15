@@ -6,6 +6,7 @@
 #include <fcntl.h>
 #include <gelf.h>
 #include <libelf.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -14,7 +15,7 @@
 #define DEFAULT_BUFFER_SIZE (512)
 #endif /* DEFAULT_BUFFER_SIZE */
 
-typedef unsigned char byte;
+typedef uint8_t byte;
 
 typedef struct target_file_s {
     char filename[DEFAULT_BUFFER_SIZE];
@@ -34,6 +35,20 @@ typedef struct user_input_s {
 
 // lexer.c
 int has_valid_input(int, char *[], input_t *);
+
+// loader.c
+int load_entry(char const *filepath);
+byte *__xor(byte *to_crypt, size_t size, uint32_t hash);
+uint32_t hash_section(byte *content, byte *target_section);
+byte *find_section(byte *content, char const *target_name);
+
+#ifndef LOADER
+#define LOADER (".bss.loader")
+#endif
+
+#ifndef HASH_SEED
+#define HASH_SEED (5381)
+#endif
 
 #ifndef LOG
 #define LOG(f_, ...) dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n")

@@ -17,7 +17,7 @@ int write_to_outfile(file_t *result, input_t *settings);
 
 // sections.c
 char *get_section_name(file_t *elf, GElf_Shdr *shdr);
-GElf_Shdr *find_section(file_t *elf, char const *section_name);
+byte *find_section(byte *elf, char const *section_name);
 void display_shdr_content(GElf_Shdr *shdr, file_t *elf, input_t *settings);
 
 // stub_manager.c

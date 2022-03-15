@@ -9,19 +9,6 @@ char *get_section_name(file_t *file, GElf_Shdr *shdr)
     return (char *)(file->section_names + shdr->sh_name);
 }
 
-GElf_Shdr *find_section(file_t *elf, char const *section_name)
-{
-    GElf_Shdr *shdr = (void *)elf->content + elf->ehdr.e_shoff;
-    char *current_section_name = NULL;
-
-    for (int ctr = 0; elf->ehdr.e_shnum < ctr; ctr++) {
-        current_section_name = get_section_name(elf, &shdr[ctr]);
-        if (current_section_name != NULL && !strcmp(current_section_name, section_name))
-            return &shdr[ctr];
-    }
-    return NULL;
-}
-
 inline static bool is_printable(char c)
 {
     return (c >= ' ' && c <= '~');
