@@ -38,16 +38,12 @@ int has_valid_input(int, char *[], input_t *);
 
 // loader.c
 int load_entry(char const *filepath);
-byte *__xor(byte *to_crypt, size_t size, uint32_t hash);
+void __xor(byte *to_crypt, size_t size, uint32_t hash);
 uint32_t hash_section(byte *content, byte *target_section);
 byte *find_section(byte *content, char const *target_name);
 
 #ifndef LOADER
 #define LOADER (".bss.loader")
-#endif
-
-#ifndef HASH_SEED
-#define HASH_SEED (5381)
 #endif
 
 #ifndef LOG

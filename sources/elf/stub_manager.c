@@ -13,7 +13,7 @@ inline static uint64_t rrotate(uint64_t key)
 
 int encypher_text_section(file_t *elf, input_t *settings)
 {
-    GElf_Shdr *text_section = find_section(elf, ".text");
+    GElf_Shdr *text_section = (GElf_Shdr *)find_section(elf->content, ".text");
     uint64_t stub_section_hash = 0x5d; // TODO
     size_t size = 0;
 
