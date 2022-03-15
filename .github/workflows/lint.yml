@@ -11,4 +11,4 @@ jobs:
       run: sudo apt install -y clang-tidy libelf-dev
 
     - name: clang-format lint
-      run: find -type f -name "*.c" -o -type f -name "*.h" -exec ./tests/lint.sh {} \;
+      run: find . -type f -name "*.h" -exec ./tests/lint.sh {} \;  -o -type f -name "*.c" -exec ./tests/lint.sh {} \;
