@@ -10,3 +10,6 @@ vilya
 unit_tests
 *.a
 *.o
+
+# scripts
+run-lint.sh

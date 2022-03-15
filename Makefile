@@ -59,7 +59,7 @@ else
   CC         := clang
   C_WARNINGS := -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-format-nonliteral \
 				-Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command \
-				-Wno-padded -Wno-extra-semi-stmt
+				-Wno-padded -Wno-extra-semi-stmt -Wno-cast-align
   CFLAGS     := -static
   LDFLAGS    := -lelf
 endif
@@ -68,7 +68,7 @@ endif
 C_DEPS      = -MT $(OBJECTS_DIR)/$*.o -MMD -MP -MF $(OBJECTS_DIR)/$*.d
 C_TEST_DEPS = -MT $(TEST_OBJECTS_DIR)/$*.o -MMD -MP -MF $(TEST_OBJECTS_DIR)/$*.d
 C_DEBUG     := -ggdb3
-C_OPTIMIZE  := -O0
+C_OPTIMIZE  := -O3
 
 
 CFLAGS := $(CFLAGS) $(C_DEBUG) $(C_OPTIMIZE) $(C_WARNINGS) -I $(INCLUDE_DIR)
@@ -99,10 +99,6 @@ fclean: clean ## cleans everything
 > $(RM) $(NAME) unit_tests
 .PHONY: re
 re: fclean all ## rebuilds after cleaning
-
-.PHONY: CI
-CI: ## runs ci-linting
-> $(foreach SOURCE, $(SOURCES), bash ./tests/lint.sh && ) true
 
 .PHONY: test ## runs unit tests
 test: fclean $(OBJECTS) $(TEST_OBJECTS)
