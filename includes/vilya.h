@@ -55,4 +55,12 @@ typedef struct user_input_s {
 // parse.c
 int parse(input_t *settings, file_t *file);
 
+// sections.c
+uint8_t *find_section(uint8_t *header, char const *section_name);
+int remove_write_perms(uint8_t *section_ptr, size_t section_size);
+int add_write_perms(uint8_t *section_ptr, size_t section_size);
+void dump_shdr(uint8_t *elf, size_t elf_len, uint8_t *shdr_ptr);
+char *get_section_name(uint8_t *elf, uint8_t *shdr_ptr);
+void dump_ehdr(uint8_t *elf, size_t elf_len);
+
 #endif /* VILYA_H */

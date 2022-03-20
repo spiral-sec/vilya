@@ -31,14 +31,14 @@ static int is_valid_elf(file_t *file)
 {
     GElf_Ehdr *ehdr = (GElf_Ehdr *)file->binary_dump;
     bool is_valid_arch = false;
-    short arch[] = {EM_X86_64, -1};
+    short accepted_arch[] = {EM_X86_64, -1};
 
     if (!ehdr)
         return 0;
     else if (strncmp((char *)ehdr->e_ident, ELFMAG, SELFMAG))
         return 0;
-    for (size_t ctr = 0; arch[ctr] != -1; ctr++) {
-        if (arch[ctr] == ehdr->e_machine)
+    for (size_t ctr = 0; accepted_arch[ctr] != -1; ctr++) {
+        if (accepted_arch[ctr] == ehdr->e_machine)
             is_valid_arch = true;
     }
     return is_valid_arch;
