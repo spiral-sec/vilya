@@ -8,9 +8,14 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: install dependencies
-      run: sudo apt install -y clang-tidy libelf-dev
+      run: sudo apt install -y clang-tidy libelf-dev shellcheck
+
+    - name: shellcheck scripts
+      run: |
+        find . -type f -name "*.sh" -exec shellcheck {} \;
 
     - name: clang-format lint
       run: |
         find ./sources -type f -name "*.c" -exec ./tests/lint.sh {} \;
         find ./includes -type f -name "*.h" -exec ./tests/lint.sh {} \;
+
