@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <gelf.h>
 #include <libelf.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -26,6 +27,23 @@ static void gen_filename(char const *src, char result[DEFAULT_BUFFER_SIZE])
     }
 }
 
+static int is_valid_elf(file_t *file)
+{
+    GElf_Ehdr *ehdr = (GElf_Ehdr *)file->binary_dump;
+    bool is_valid_arch = false;
+    short arch[] = {EM_X86_64, -1};
+
+    if (!ehdr)
+        return 0;
+    else if (strncmp((char *)ehdr->e_ident, ELFMAG, SELFMAG))
+        return 0;
+    for (size_t ctr = 0; arch[ctr] != -1; ctr++) {
+        if (arch[ctr] == ehdr->e_machine)
+            is_valid_arch = true;
+    }
+    return is_valid_arch;
+}
+
 static int read_elf(input_t *settings, file_t *file)
 {
     int fd = open(settings->filepath, O_RDONLY);
@@ -41,6 +59,10 @@ static int read_elf(input_t *settings, file_t *file)
     } else if (!gelf_getehdr(elf_obj, &ehdr))
         RZERO_IF(settings->verbose, "[!] could not load elf header");
     file->original_entry_point = ehdr.e_entry;
+    if (!is_valid_elf(file))
+        return 0;
+    close(fd);
+    elf_end(elf_obj);
     LOG_IF(settings->verbose, "[+] Successfully loaded ELF file");
     LOG_IF(settings->verbose, "\tEntry point: %ld", file->original_entry_point);
     return 1;
