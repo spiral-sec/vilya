@@ -15,52 +15,44 @@
 #define DEFAULT_BUFFER_SIZE (512)
 #endif /* DEFAULT_BUFFER_SIZE */
 
-typedef uint8_t byte;
-
-typedef struct target_file_s {
+/*
+    Reprensents new file we are trying to write.
+    1st version will be a bit hacky, because we might need to
+    recompute GElf_* objects everytime we want them, and work on our output,
+    all of the time.
+*/
+typedef struct dynamic_binary_s {
     char filename[DEFAULT_BUFFER_SIZE];
-    GElf_Ehdr ehdr;
-    GElf_Shdr *symbols;
-    byte *section_names;
+    GElf_Addr stub_entrypoint;
+    Elf *bin;
+
+    uint8_t *output;
+    size_t output_size;
+} dynbin_t;
+
+/*
+   Reprensents target file in its pre-digested state.
+   Should be set once, and never used to sync new data.
+*/
+typedef struct pre_digested_file_s {
+    char filename[DEFAULT_BUFFER_SIZE];
     GElf_Addr original_entry_point;
 
-    byte *content;
-    size_t content_size;
+    uint8_t *binary_dump;
+    size_t binary_dump_size;
 } file_t;
 
 typedef struct user_input_s {
     int verbose : 1;
     char filepath[DEFAULT_BUFFER_SIZE];
-    char current_file_path[DEFAULT_BUFFER_SIZE];
+    char packer_filepath[DEFAULT_BUFFER_SIZE];
 } input_t;
 
-// lexer.c
-int has_valid_input(int, char *[], input_t *);
-
-// loader.c
-int load_entry(void);
-uint32_t get_hash_from_program(void);
-void xor_bytes(byte *to_crypt, size_t size, uint32_t hash);
-byte *find_section(byte *content, char const *target_name);
-
-#ifndef LOADER
-#define LOADER (".vilya")
+#ifndef STUB_SECTION
+#define STUB_SECTION (".vilya")
 #endif
 
-#ifndef LOG
-#define LOG(f_, ...) dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n")
-#endif /* LOG */
-
-#ifndef LOG_IF
-#define LOG_IF(predicate, f_, ...)                                                                \
-    do                                                                                            \
-        if (predicate) {                                                                          \
-            dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n");          \
-        }                                                                                         \
-    while (0);
-#endif /* LOG_IF */
-
-// logs.c
-char *timestamp(void);
+// parse.c
+int parse(input_t *settings, file_t *file);
 
 #endif /* VILYA_H */

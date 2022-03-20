@@ -1,5 +1,6 @@
 
 #include <criterion/criterion.h>
+#include "utils.h"
 #include "vilya.h"
 
 Test(has_valid_input, default_case)

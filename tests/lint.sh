@@ -18,6 +18,7 @@ check_static_analysis () {
         -checks="-*,
                   clang-analyzer-*,
                  -clang-analyzer-cplusplus*,
+                 -clang-analyzer-optin.portability.UnixAPI,
                  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling"\
         -- -I ./includes || exit 1
 }
