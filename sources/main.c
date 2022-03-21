@@ -18,5 +18,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Could not validate file.\n");
         return 1;
     }
+    dump_ehdr(target.binary_dump, target.binary_dump_size);
     return 0;
 }

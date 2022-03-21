@@ -59,7 +59,7 @@ else
   CC         := clang
   C_WARNINGS := -Weverything -Wno-gnu-zero-variadic-macro-arguments -Wno-format-nonliteral \
 				-Wno-gnu-conditional-omitted-operand -Wno-documentation -Wno-documentation-unknown-command \
-				-Wno-padded -Wno-extra-semi-stmt -Wno-cast-align
+				-Wno-padded -Wno-extra-semi-stmt -Wno-cast-align -Wno-sign-conversion
   CFLAGS     := -static
   LDFLAGS    := -lelf
 endif

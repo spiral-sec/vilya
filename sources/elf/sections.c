@@ -2,6 +2,7 @@
 #include <gelf.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -11,7 +12,7 @@
 static void get_page_data(
 uint8_t *ptr, uint8_t *end_ptr, uintptr_t *page_start, size_t *page_start_size)
 {
-    size_t page_size = sysconf(_SC_PAGESIZE);
+    ssize_t page_size = sysconf(_SC_PAGESIZE);
 
     *page_start = (uintptr_t)ptr & -page_size;
     *page_start_size = end_ptr - (uint8_t *)*page_start;
@@ -89,17 +90,22 @@ void dump_shdr(uint8_t *elf, size_t elf_len, uint8_t *shdr_ptr)
     uint8_t c = 0;
 
     LOG("shdr %s@%ld:", get_section_name(elf, shdr_ptr), shdr->sh_offset);
-    // TODO dump shdr data here
     for (size_t ctr = shdr->sh_offset; shdr->sh_offset + shdr->sh_size < ctr; ctr++) {
         if (ctr > elf_len)
             break;
         c = is_printable(elf[ctr]) ? elf[ctr] : '.';
-        printf("%c", (char)c);
+        fprintf(stderr, "%c", (char)c);
     }
-    printf("\n");
+    fprintf(stderr, "\n");
 }
 
 void dump_ehdr(uint8_t *elf, size_t elf_len)
 {
-    // TODO
+    GElf_Ehdr *ehdr = (GElf_Ehdr *)elf;
+
+    if (elf_len < sizeof(GElf_Ehdr *))
+        return;
+    printf("ELF HEADER:\n\ttype: 0x%x\n\tmachine: 0x%x\n\tversion: 0x%x\n\tentry: 0x%lx\n\tsize: "
+           "0x%x\n\tflags: 0x%x\n\n",
+    ehdr->e_type, ehdr->e_machine, ehdr->e_version, ehdr->e_entry, ehdr->e_ehsize, ehdr->e_flags);
 }
