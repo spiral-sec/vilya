@@ -18,7 +18,7 @@ uint8_t *ptr, uint8_t *end_ptr, uintptr_t *page_start, size_t *page_start_size)
     *page_start_size = end_ptr - (uint8_t *)*page_start;
 }
 
-int add_write_perms(uint8_t *section_ptr, size_t section_size)
+IN_SECTION(STUB) int add_write_perms(uint8_t *section_ptr, size_t section_size)
 {
     uint8_t *end_of_section = section_ptr + section_size;
     size_t p_start_size = 0;
@@ -31,7 +31,7 @@ int add_write_perms(uint8_t *section_ptr, size_t section_size)
     return 1;
 }
 
-int remove_write_perms(uint8_t *section_ptr, size_t section_size)
+IN_SECTION(STUB) int remove_write_perms(uint8_t *section_ptr, size_t section_size)
 {
     uint8_t *end_of_section = section_ptr + section_size;
     size_t p_start_size = 0;
@@ -44,22 +44,16 @@ int remove_write_perms(uint8_t *section_ptr, size_t section_size)
     return 1;
 }
 
-uint8_t *find_section(uint8_t *elf, char const *section_name)
+IN_SECTION(STUB) uint8_t *find_section(uint8_t *elf, char const *section_name)
 {
     GElf_Ehdr *ehdr = (GElf_Ehdr *)elf;
-    GElf_Shdr *shdr = NULL;
-    GElf_Shdr *str_table = NULL;
-    uint8_t *sec_table_ptr = NULL;
+    GElf_Shdr *shdr = (!ehdr) ? NULL : (GElf_Shdr *)(elf + ehdr->e_shoff);
     char *curr_section_name = NULL;
 
-    if (!ehdr)
+    if (!ehdr || !shdr)
         return NULL;
-    // FIXME: For now, we assume the rest of the binary is valid
-    shdr = (GElf_Shdr *)(elf + ehdr->e_shoff);
-    str_table = &shdr[ehdr->e_shstrndx];
-    sec_table_ptr = elf + str_table->sh_offset;
     for (size_t ctr = 0; ctr < ehdr->e_shnum; ctr++) {
-        curr_section_name = (char *)(sec_table_ptr + shdr[ctr].sh_name);
+        curr_section_name = get_section_name(elf, (uint8_t *)&shdr[ctr]);
         if (!strcmp(curr_section_name, section_name))
             return (uint8_t *)&shdr[ctr];
     }

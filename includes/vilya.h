@@ -48,8 +48,8 @@ typedef struct user_input_s {
     char packer_filepath[DEFAULT_BUFFER_SIZE];
 } input_t;
 
-#ifndef STUB_SECTION
-#define STUB_SECTION (".vilya")
+#ifndef STUB
+#define STUB (".vilya")
 #endif
 
 // parse.c
@@ -60,7 +60,13 @@ uint8_t *find_section(uint8_t *header, char const *section_name);
 int remove_write_perms(uint8_t *section_ptr, size_t section_size);
 int add_write_perms(uint8_t *section_ptr, size_t section_size);
 void dump_shdr(uint8_t *elf, size_t elf_len, uint8_t *shdr_ptr);
-char *get_section_name(uint8_t *elf, uint8_t *shdr_ptr);
 void dump_ehdr(uint8_t *elf, size_t elf_len);
+char *get_section_name(uint8_t *elf, uint8_t *shdr_ptr);
+
+// unload.c
+void load_entrypoint(void);
+uint8_t *read_current_program(size_t *size);
+uint32_t hash_bytes(uint8_t *bytes, size_t size);
+void xor_bytes(uint8_t *to_xor, size_t size, uint32_t hash);
 
 #endif /* VILYA_H */

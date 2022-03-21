@@ -27,6 +27,10 @@
     } while (0);
 #endif /* RZERO_IF */
 
+#ifndef IN_SECTION
+#define IN_SECTION(a) __attribute__((section(a)))
+#endif
+
 // logs.c
 char *timestamp(void);
 
