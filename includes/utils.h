@@ -4,6 +4,7 @@
 
 #include "vilya.h"
 
+
 #ifndef LOG
 #define LOG(f_, ...) dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n")
 #endif /* LOG */

@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "vilya.h"
 
-static void gen_filename(char const *src, char result[DEFAULT_BUFFER_SIZE])
+void gen_filename(char const *src, char result[DEFAULT_BUFFER_SIZE])
 {
     char const *extension = STUB;
     size_t length = strlen(src) + strlen(extension);

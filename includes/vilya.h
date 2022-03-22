@@ -24,7 +24,6 @@
 typedef struct dynamic_binary_s {
     char filename[DEFAULT_BUFFER_SIZE];
     GElf_Addr stub_entrypoint;
-    Elf *bin;
 
     uint8_t *output;
     size_t output_size;
@@ -52,8 +51,13 @@ typedef struct user_input_s {
 #define STUB (".vilya")
 #endif
 
+#ifndef HASH_SEED
+#define HASH_SEED (".vilya.seed")
+#endif
+
 // parse.c
 int parse(input_t *settings, file_t *file);
+void gen_filename(char const *src, char result[DEFAULT_BUFFER_SIZE]);
 
 // sections.c
 uint8_t *find_section(uint8_t *header, char const *section_name);
@@ -68,5 +72,8 @@ void load_entrypoint(void);
 uint8_t *read_current_program(size_t *size);
 uint32_t hash_bytes(uint8_t *bytes, size_t size);
 void xor_bytes(uint8_t *to_xor, size_t size, uint32_t hash);
+
+// pack.c
+int pack(input_t *settings, file_t *file);
 
 #endif /* VILYA_H */
