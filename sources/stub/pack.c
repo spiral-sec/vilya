@@ -89,38 +89,40 @@ static int update_htable(dynbin_t *target, input_t *settings, off_t vaddr, off_t
     return 0;
 }
 
-static int setup_payload(dynbin_t *target, off_t vaddr)
+static void setup_payload(dynbin_t *target, off_t vaddr, GElf_Addr original_entry_point)
 {
     GElf_Ehdr *ehdr = (GElf_Ehdr *)target->out;
     off_t offset = ehdr->e_entry;
-    off_t jmp_addr = 0;
+    int jmp_addr = original_entry_point - (offset + target->out_size - 5);
+    char jmp_shellcode[] = "\xe9\xde\xad\xbe\xef";
 
-    return 0;
+    memcpy(jmp_shellcode + 1, &jmp_addr, sizeof(int));
 }
 
 int pack(input_t *settings, file_t *src)
 {
-    dynbin_t packed = {0};
+    dynbin_t target = {0};
     off_t virtual_addr = 0;
     off_t code_cave_entry = 0;
     size_t new_offset = 0;
 
-    prepare_packing(&packed, src);
+    prepare_packing(&target, src);
     virtual_addr = get_virtual_addr(src, &new_offset);
     if (!virtual_addr && !new_offset) {
         LOG("[!] Could not find PT_LOAD segment");
-        destroy_dynbin(&packed);
+        destroy_dynbin(&target);
         return 0;
     }
-    code_cave_entry = load_code_cave(&packed, settings);
-    if (!code_cave_entry || !update_htable(&packed, settings, virtual_addr, code_cave_entry)) {
+    code_cave_entry = load_code_cave(&target, settings);
+    if (!code_cave_entry || !update_htable(&target, settings, virtual_addr, code_cave_entry)) {
         LOG("[!] Could not load memory for code cave");
         return 0;
     }
     code_cave_entry += virtual_addr + OFFSET_PLACE;
     LOG_IF(settings->verbose, "[+] Overriding entrypoint 0x%08lx with 0x%08lx",
-    ((GElf_Ehdr *)packed.out)->e_entry, code_cave_entry);
-    ((GElf_Ehdr *)packed.out)->e_entry = code_cave_entry;
+    ((GElf_Ehdr *)target.out)->e_entry, code_cave_entry);
+    ((GElf_Ehdr *)target.out)->e_entry = code_cave_entry;
+    setup_payload(&target, virtual_addr, src->original_entry_point);
 
     // TODO load payload
 

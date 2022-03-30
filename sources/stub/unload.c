@@ -7,6 +7,8 @@
 #include "utils.h"
 #include "vilya.h"
 
+IN_SECTION(HASH_SEED) static int g_seed = 0;
+
 IN_SECTION(STUB) static char *get_program_name(void)
 {
     char *result = malloc(sizeof(char) * DEFAULT_BUFFER_SIZE);
@@ -55,10 +57,12 @@ IN_SECTION(STUB) uint8_t *read_current_program(size_t *size)
 IN_SECTION(STUB) static uint32_t load_hash(uint8_t *bytes)
 {
     GElf_Shdr *stub_section = (GElf_Shdr *)find_section(bytes, STUB);
+    GElf_Shdr *seed_section = (GElf_Shdr *)find_section(bytes, HASH_SEED);
 
-    if (!stub_section)
+    if (!stub_section || !seed_section)
         return 0;
-    return hash_bytes(bytes + stub_section->sh_offset, stub_section->sh_size);
+    return (hash_bytes(bytes + seed_section->sh_offset, seed_section->sh_size) +
+    hash_bytes(bytes + stub_section->sh_offset, stub_section->sh_size) % UINT32_MAX);
 }
 
 IN_SECTION(STUB) void load_entrypoint(void)
