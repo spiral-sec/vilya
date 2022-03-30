@@ -7,8 +7,6 @@
 #include "utils.h"
 #include "vilya.h"
 
-IN_SECTION(HASH_SEED) static int g_seed = 0;
-
 IN_SECTION(STUB) static char *get_program_name(void)
 {
     char *result = malloc(sizeof(char) * DEFAULT_BUFFER_SIZE);
@@ -57,12 +55,10 @@ IN_SECTION(STUB) uint8_t *read_current_program(size_t *size)
 IN_SECTION(STUB) static uint32_t load_hash(uint8_t *bytes)
 {
     GElf_Shdr *stub_section = (GElf_Shdr *)find_section(bytes, STUB);
-    GElf_Shdr *seed_section = (GElf_Shdr *)find_section(bytes, HASH_SEED);
 
-    if (!stub_section || !seed_section)
+    if (!stub_section)
         return 0;
-    return hash_bytes(bytes + seed_section->sh_offset, seed_section->sh_size) ^
-        hash_bytes(bytes + stub_section->sh_offset, stub_section->sh_size);
+    return hash_bytes(bytes + stub_section->sh_offset, stub_section->sh_size);
 }
 
 IN_SECTION(STUB) void load_entrypoint(void)
@@ -77,16 +73,9 @@ IN_SECTION(STUB) void load_entrypoint(void)
         return;
     text_section = (GElf_Shdr *)find_section(bytes, ".text");
     hash = load_hash(bytes);
+    add_write_perms(bytes + text_section->sh_offset, size);
     xor_bytes(bytes + text_section->sh_offset, size, hash);
-    entrypoint = (void (*)(void))(bytes + text_section->sh_offset); //FIXME entrypoint is not at the start of .text
-
-    /*
-        TODO Polymorphic packer stuff:
-        1. reset seed
-        2. re-pack .text
-        3. replace bytes
-        4. sync file
-    */
-
+    remove_write_perms(bytes + text_section->sh_offset, size);
+    entrypoint = (void (*)(void))(bytes + text_section->sh_offset);
     entrypoint();
 }

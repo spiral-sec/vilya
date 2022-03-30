@@ -4,7 +4,6 @@
 
 #include "vilya.h"
 
-
 #ifndef LOG
 #define LOG(f_, ...) dprintf(2, "[%s] ", timestamp()), printf((f_), ##__VA_ARGS__), printf("\n")
 #endif /* LOG */
@@ -30,6 +29,10 @@
 
 #ifndef IN_SECTION
 #define IN_SECTION(a) __attribute__((section(a)))
+#endif
+
+#ifndef ALIGN_OFFSET
+#define ALIGN_OFFSET(off) (off + off % 4)
 #endif
 
 // logs.c

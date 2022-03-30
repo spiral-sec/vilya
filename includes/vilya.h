@@ -23,10 +23,11 @@
 */
 typedef struct dynamic_binary_s {
     char filename[DEFAULT_BUFFER_SIZE];
-    GElf_Addr stub_entrypoint;
-
-    uint8_t *output;
-    size_t output_size;
+    uint8_t *src;
+    uint8_t *out;
+    size_t out_size;
+    size_t src_size;
+    uint8_t *stub_content;
 } dynbin_t;
 
 /*
@@ -54,6 +55,8 @@ typedef struct user_input_s {
 #ifndef HASH_SEED
 #define HASH_SEED (".vilya.seed")
 #endif
+
+#define OFFSET_PLACE (0x800000)
 
 // parse.c
 int parse(input_t *settings, file_t *file);
