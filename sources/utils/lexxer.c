@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "elf.h"
+#include "utils.h"
 #include "vilya.h"
 
 static void display_help(char const *bin_name)

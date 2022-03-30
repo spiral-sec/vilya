@@ -18,10 +18,14 @@ check_static_analysis () {
         -checks="-*,
                   clang-analyzer-*,
                  -clang-analyzer-cplusplus*,
+                 -clang-analyzer-optin.portability.UnixAPI,
                  -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling"\
-        -- -I ./include || exit 1
+        -- -I ./includes || exit 1
 }
 
-[[ $# -ne 1 ]] && { echo "$0:Error: expected an argument, got $#" && exit 1 ; }
+[[ $# -ne 1 ]] && {
+    echo "$0:Error: expected an argument, got $#" && exit 1 ;
+}
+echo "Checking ${1}..."
 check_format "${1}"
 check_static_analysis "${1}"
